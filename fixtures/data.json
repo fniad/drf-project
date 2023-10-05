@@ -21,7 +21,7 @@
   },
   {
     "model": "payment.payment",
-    "pk": 2,
+    "pk": 3,
     "fields": {
       "course": 3,
       "date_pay": "2023-07-10",
@@ -31,7 +31,7 @@
   },
   {
     "model": "payment.payment",
-    "pk": 2,
+    "pk": 4,
     "fields": {
       "course": 4,
       "date_pay": "2021-07-10",
@@ -41,7 +41,7 @@
   },
   {
     "model": "payment.payment",
-    "pk": 2,
+    "pk": 5,
     "fields": {
       "lesson": 4,
       "date_pay": "2023-07-10",
@@ -51,7 +51,7 @@
   },
   {
     "model": "payment.payment",
-    "pk": 2,
+    "pk": 6,
     "fields": {
       "lesson": 2,
       "date_pay": "2020-08-10",
@@ -61,7 +61,7 @@
   },
   {
     "model": "payment.payment",
-    "pk": 2,
+    "pk": 7,
     "fields": {
       "lesson": 4,
       "date_pay": "2022-10-10",
@@ -72,7 +72,7 @@
   ,
   {
     "model": "payment.payment",
-    "pk": 2,
+    "pk": 8,
     "fields": {
       "lesson": 3,
       "date_pay": "2023-10-10",
