@@ -8,6 +8,7 @@ app_name = TrainingCoursesConfig.name
 
 router = DefaultRouter()
 router.register(r'courses', CourseViewSet, basename='courses')
+router.register(r'subscription', SubscriptionViewSet, basename='subscription')
 
 urlpatterns = [
                   path('lessons/', LessonListAPIView.as_view(), name='list-lessons'),

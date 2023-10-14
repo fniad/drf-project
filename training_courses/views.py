@@ -1,15 +1,17 @@
 from django.db.models import Count
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from training_courses.models import Course, Lesson
-from training_courses.permissions import IsCourseOwner, IsModerator, IsLessonOwner
+from training_courses.models import Course, Lesson, Subscription
+from training_courses.pagination import CoursePagination, LessonPagination, SubscriptionPagination
+from training_courses.permissions import IsCourseOwner, IsModerator, IsLessonOwner, IsSubscriptionOwner
 from training_courses.serializers import CourseSerializer, LessonSerializer, CourseListSerializer, \
-    CourseDetailSerializer
+    CourseDetailSerializer, SubscriptionSerializer, LessonListSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all().order_by('name_course')
     default_serializer = CourseSerializer
+    pagination_class = CoursePagination
     list_serializers = {
         "list": CourseListSerializer,
         "retrieve": CourseDetailSerializer,
@@ -17,6 +19,9 @@ class CourseViewSet(viewsets.ModelViewSet):
         "update": CourseSerializer,
         "destroy": CourseSerializer,
     }
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
     def get_serializer_class(self):
         return self.list_serializers.get(self.action, self.default_serializer)
@@ -40,10 +45,21 @@ class CourseViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
 
+class SubscriptionViewSet(viewsets.ModelViewSet):
+    queryset = Subscription.objects.all().order_by('pk')
+    serializer_class = SubscriptionSerializer
+    pagination_class = SubscriptionPagination
+    permission_classes = [IsAuthenticated, IsSubscriptionOwner | IsModerator]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
 class LessonListAPIView(generics.ListAPIView):
-    serializer_class = LessonSerializer
+    serializer_class = LessonListSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsLessonOwner | IsModerator]
+    pagination_class = LessonPagination
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
@@ -55,6 +71,9 @@ class LessonRetrieveAPIView(generics.RetrieveAPIView):
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, ~IsModerator]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
