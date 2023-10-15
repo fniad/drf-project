@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import BasePermission
 
 from users.models import UserRoles
 
@@ -19,6 +19,14 @@ class IsCourseOwner(BasePermission):
         return False
 
 
+class IsSubscriptionOwner(BasePermission):
+    message = 'Вы не владелец подписки'
+    def has_object_permission(self, request, view, obj):
+        if request.user == obj.user:
+            return True
+        return False
+
+
 class IsModerator(BasePermission):
     message = 'Только модератор'
 
@@ -26,4 +34,5 @@ class IsModerator(BasePermission):
         if request.user.role == UserRoles.MODERATOR:
             return True
         return False
+
 
