@@ -57,7 +57,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
 
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonListSerializer
-    queryset = Lesson.objects.all()
+    queryset = Lesson.objects.all().order_by('name_lesson')
     permission_classes = [IsAuthenticated, IsLessonOwner | IsModerator]
     pagination_class = LessonPagination
 
