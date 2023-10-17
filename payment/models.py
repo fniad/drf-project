@@ -1,3 +1,4 @@
+""" Модели приложения payment """
 from django.db import models
 
 from training_courses.models import Course, Lesson
@@ -5,6 +6,7 @@ from users.models import NULLABLE, User
 
 
 class Payment(models.Model):
+    """ Модель оплаты """
     PAY_CARD = 'card'
     PAY_CASH = 'cash'
 
@@ -25,5 +27,6 @@ class Payment(models.Model):
         return f'{self.user} - {self.course if self.course else self.lesson} - {self.date_pay}'
 
     class Meta:
+        """ Мета-данные """
         verbose_name = 'оплата'
         verbose_name_plural = 'оплаты'

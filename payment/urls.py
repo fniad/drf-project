@@ -1,3 +1,4 @@
+""" URLS для приложения payment """
 from django.urls import path
 
 from payment.apps import PaymentConfig

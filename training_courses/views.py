@@ -1,15 +1,17 @@
+""" Представления для курсов, уроков и подписок"""
 from django.db.models import Count
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from training_courses.models import Course, Lesson, Subscription
-from training_courses.pagination import CoursePagination, LessonPagination, SubscriptionPagination
-from training_courses.permissions import IsCourseOwner, IsModerator, IsLessonOwner, IsSubscriptionOwner
-from training_courses.serializers import CourseSerializer, LessonSerializer, CourseListSerializer, \
+from .models import Course, Lesson, Subscription
+from .pagination import CoursePagination, LessonPagination, SubscriptionPagination
+from .permissions import IsCourseOwner, IsModerator, IsLessonOwner, IsSubscriptionOwner
+from .serializers import CourseSerializer, LessonSerializer, CourseListSerializer, \
     CourseDetailSerializer, SubscriptionSerializer, LessonListSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all().order_by('name_course')
+    """ ViewSet для курсов """
+    queryset = Course.objects.all().order_by('pk')
     default_serializer = CourseSerializer
     pagination_class = CoursePagination
     list_serializers = {
@@ -46,6 +48,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
+    """ ViewSet для подписок """
     queryset = Subscription.objects.all().order_by('pk')
     serializer_class = SubscriptionSerializer
     pagination_class = SubscriptionPagination
@@ -56,19 +59,22 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
 
 
 class LessonListAPIView(generics.ListAPIView):
+    """ Список уроков """
     serializer_class = LessonListSerializer
-    queryset = Lesson.objects.all().order_by('name_lesson')
+    queryset = Lesson.objects.all().order_by('pk')
     permission_classes = [IsAuthenticated, IsLessonOwner | IsModerator]
     pagination_class = LessonPagination
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
+    """ Подробная информация об уроке """
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
+    queryset = Lesson.objects.all().order_by('pk')
     permission_classes = [IsAuthenticated, IsLessonOwner | IsModerator]
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
+    """ Создание урока """
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, ~IsModerator]
 
@@ -77,11 +83,13 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
+    """ Обновление урока """
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
+    queryset = Lesson.objects.all().order_by('pk')
     permission_classes = [IsAuthenticated, IsLessonOwner | ~IsModerator]
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
-    queryset = Lesson.objects.all()
+    """ Удаление урока """
+    queryset = Lesson.objects.all().order_by('pk')
     permission_classes = [IsAuthenticated, IsLessonOwner | IsAdminUser]
