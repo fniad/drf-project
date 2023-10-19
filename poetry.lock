@@ -630,6 +630,21 @@ doc = ["sphinx"]
 test = ["pytest", "pytest-cov"]
 
 [[package]]
+name = "stripe"
+version = "7.0.0"
+description = "Python bindings for the Stripe API"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "stripe-7.0.0-py2.py3-none-any.whl", hash = "sha256:15ebdcb8271b4fd54ff861d85101a78a6f01ce7c1ae236bb0e2b8f76bf7ffad8"},
+    {file = "stripe-7.0.0.tar.gz", hash = "sha256:9a35f404c04eb80bff0bb618950e0548943f1ef47c14e8e8f4bbc6f5e751ba99"},
+]
+
+[package.dependencies]
+requests = {version = ">=2.20", markers = "python_version >= \"3.0\""}
+typing-extensions = {version = ">=4.0.0", markers = "python_version >= \"3.7\""}
+
+[[package]]
 name = "typing-extensions"
 version = "4.8.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -682,4 +697,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "ab33de29b0139e6fb6c1e660dde7151b4c30fc8c59fc13cdae5244fa2bdfea89"
+content-hash = "dfd42b60f9612e91575a17ea389b3b982a33001c7aed9e2b78b84e2b3c9c6aa8"

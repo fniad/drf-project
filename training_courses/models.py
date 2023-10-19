@@ -1,6 +1,5 @@
 """ Модели приложения training_courses """
 from django.db import models
-
 from users.models import NULLABLE, User
 
 
@@ -10,6 +9,22 @@ class Course(models.Model):
     preview_img_course = models.ImageField(upload_to='courses/', verbose_name='превью курса', **NULLABLE)
     description_course = models.TextField(verbose_name='описание курса')
     owner = models.ForeignKey('users.User', on_delete=models.CASCADE, null=True, verbose_name='Владелец')
+    price = models.PositiveIntegerField(default=0)
+
+    @property
+    def display_price(self) -> str:
+        return '${0:.2f}'.format(self.price)
+
+    @property
+    def stripe_price_data(self) -> dict:
+        return {
+            'currency': 'usd',
+            'unit_amount': self.price,
+            'product_data': {
+                'name': self.name_course,
+            },
+        }
+
 
     def __str__(self):
         return f'{self.name_course}'
@@ -28,6 +43,22 @@ class Lesson(models.Model):
     video_url_lesson = models.URLField(**NULLABLE, verbose_name='url_видео')
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, **NULLABLE, verbose_name='курс')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, verbose_name='Владелец')
+    price = models.PositiveIntegerField(default=0)
+
+    @property
+    def display_price(self) -> str:
+        return '${0:.2f}'.format(self.price)
+
+    @property
+    def stripe_price_data(self) -> dict:
+        return {
+            'currency': 'usd',
+            'unit_amount': self.price,
+            'product_data': {
+                'name': self.name_lesson,
+            },
+        }
+
 
     def __str__(self):
         return f'{self.name_lesson}'
