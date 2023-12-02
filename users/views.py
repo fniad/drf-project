@@ -9,7 +9,7 @@ from users.serializers import UserSerializer, UserPublicProfileSerializer, UserC
 
 
 class UserListAPIView(generics.ListAPIView):
-    """ Список уроков """
+    """ Список пользователей """
     serializer_class = UserPublicProfileSerializer
     queryset = User.objects.all().order_by('pk')
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
@@ -17,7 +17,7 @@ class UserListAPIView(generics.ListAPIView):
 
 
 class UserRetrieveAPIView(generics.RetrieveAPIView):
-    """ Подробная информация об уроке """
+    """ Подробная информация о пользователе """
     queryset = User.objects.all().order_by('pk')
     pagination_class = UserPagination
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly | IsAdminUser]
@@ -31,20 +31,20 @@ class UserRetrieveAPIView(generics.RetrieveAPIView):
 
 
 class UserCreateAPIView(generics.CreateAPIView):
-    """ Создание урока """
+    """ Создание пользователя """
     serializer_class = UserCreateSerializer
     permission_classes = [AllowAny]
 
 
 class UserUpdateAPIView(generics.UpdateAPIView):
-    """ Обновление урока """
+    """ Обновление пользователя """
     queryset = User.objects.all().order_by('pk')
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly | IsAdminUser]
 
 
 class UserDestroyAPIView(generics.DestroyAPIView):
-    """ Удаление урока """
+    """ Удаление пользователя """
     queryset = User.objects.all().order_by('pk')
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly | IsAdminUser]

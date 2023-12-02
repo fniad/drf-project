@@ -21,6 +21,8 @@ drf-yasg = "^1.21.7"
 django-cors-headers = "^4.3.0"
 requests = "^2.31.0"
 stripe = "^7.0.0"
+celery = "^5.3.4"
+redis = "^5.0.1"
 
 
 [build-system]

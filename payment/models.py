@@ -36,6 +36,7 @@ class Payment(models.Model):
     )
     object_id = models.PositiveIntegerField(verbose_name='ID объекта', **NULLABLE)
     content_object = GenericForeignKey('content_type', 'object_id')
+    retrieve_id = models.CharField(max_length=255, unique=True, editable=False, **NULLABLE)
 
     def __str__(self):
         return f'{self.user} - {self.date_pay}'

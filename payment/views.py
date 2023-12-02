@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from payment.models import Payment, StripeCheckoutSession
 from payment.serializers import PaymentSerializer, SuccessPaymentSerializer, PaymentRetrieveSerializer
+from payment.serviсes import PaymentService
 from training_courses.models import Course, Lesson
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -58,8 +59,6 @@ class PaymentCreateAPIView(generics.CreateAPIView):
                 success_url='http://localhost:8000/' +
                             reverse('payment:success') + '?session_id={CHECKOUT_SESSION_ID}')
 
-            pprint(checkout_session.id)
-
         except Exception as e:
 
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -104,8 +103,14 @@ class PaymentSuccessView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         stripe_session = get_object_or_404(StripeCheckoutSession, stripe_id=request.GET.get('session_id'))
         checkout_session = StripeCheckoutSession.objects.get(stripe_id=stripe_session.stripe_id)
+        session = stripe.checkout.Session.retrieve(checkout_session.stripe_id)
+        stripe_session.status = session['status']
+        stripe_session.save()
+        retrieve_id = session['payment_intent']
         payment = checkout_session.payment
+        payment.retrieve_id = retrieve_id
+        payment.save()
 
-        serializer = PaymentSerializer(payment)
+        serializer = PaymentRetrieveSerializer(payment)
 
         return Response(serializer.data)

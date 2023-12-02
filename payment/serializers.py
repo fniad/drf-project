@@ -3,6 +3,7 @@ import stripe
 from django.conf import settings
 from rest_framework import serializers
 from payment.models import Payment, StripeCheckoutSession
+from payment.serviсes import PaymentService
 from training_courses.serializers import CourseSerializer, LessonSerializer
 
 
@@ -61,6 +62,22 @@ class PaymentRetrieveSerializer(serializers.ModelSerializer):
             lesson = obj.content_object
             return LessonSerializer(lesson).data
         return None
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        payment, payment_intent = PaymentService.get_payment_info(instance.id)
+
+        if payment and payment_intent:
+            payment_data = {
+                'id': payment.id,
+                'status': payment_intent.status,
+                'amount': payment_intent.amount,
+                'currency': payment_intent.currency,
+                'payment_method': payment.payment_method,
+            }
+            data['payment_intent'] = payment_data
+
+        return data
 
     class Meta:
         """ Мета-данные """
