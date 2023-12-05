@@ -16,6 +16,7 @@ from pathlib import Path
 
 from decouple import config
 from dotenv import load_dotenv
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -170,3 +171,23 @@ CSRF_TRUSTED_ORIGINS = [
 
 STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+
+CELERY_BEAT_SCHEDULE = {
+    'update-course-materials': {
+        'task': 'training_courses.tasks.check_inactive_users',
+        'schedule': timedelta(minutes=60),
+    },
+    'check-user-last-login': {
+        'task': 'training_courses.tasks.check_inactive_users',
+        'schedule': crontab(minute='*/10'),
+    },
+}
+
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = config('EMAIL_USE_SSL') == '1'
