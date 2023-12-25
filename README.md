@@ -38,7 +38,7 @@
 
 ```python3 manage.py migrate```
 
-# Для запуска DOCER
+# Для запуска DOCKER
 
 1.  На Ubuntu или Linux сначала остановить postgresql ```systemctl stop postgresql```
 2. ```docker-compose build```
