@@ -16,7 +16,7 @@ from pathlib import Path
 
 from decouple import config
 from dotenv import load_dotenv
-from celery.schedules import crontab
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,7 +33,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_yasg',
     'corsheaders',
+    'django_celery_beat',
 
     'users',
     'training_courses',
@@ -95,6 +96,8 @@ DATABASES = {
         'NAME': config('NAME_DB'),
         'USER': config('USER_DB'),
         'PASSWORD': config('PASSWORD_DB'),
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
 
@@ -172,17 +175,13 @@ CSRF_TRUSTED_ORIGINS = [
 STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 
 CELERY_BEAT_SCHEDULE = {
-    'update-course-materials': {
-        'task': 'training_courses.tasks.check_inactive_users',
-        'schedule': timedelta(minutes=60),
-    },
     'check-user-last-login': {
         'task': 'training_courses.tasks.check_inactive_users',
-        'schedule': crontab(minute='*/10'),
+        'schedule': timedelta(minutes=15),
     },
 }
 

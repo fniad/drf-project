@@ -1,7 +1,6 @@
 """ Представления для курсов, уроков и подписок"""
 from django.db.models import Count
 from rest_framework import viewsets
-from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from .models import Course, Lesson, Subscription
