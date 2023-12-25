@@ -37,3 +37,10 @@
 ### Шаг 6 Применение миграций
 
 ```python3 manage.py migrate```
+
+# Для запуска DOCER
+
+1.  На Ubuntu или Linux сначала остановить postgresql ```systemctl stop postgresql```
+2. ```docker-compose build```
+3. ```docker-compose exec app python manage.py migrate``` в соседнем терминале
+4. ```docker-compose up```
