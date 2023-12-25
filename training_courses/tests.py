@@ -1,3 +1,4 @@
+""" Тесты для приложения training_courses """
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
@@ -290,6 +291,41 @@ class LessonTestCase(APITestCase):
 
         data = {
             "video_url_lesson": "https://www.outub.com/watch?v=ChEdFh7Q-Vw&pp=ygUDb29w"
+        }
+
+        response = self.client.patch(
+            reverse('courses:update-lessons', args=[self.lesson.id]),
+            data=data
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
+
+
+    def test_lesson_update_description_is_valid(self):
+        """ Тест обновление описания урока (проверка на валидность ссылки проходит)"""
+
+        data = {
+            "description_lesson": "www.youtube.com"
+        }
+
+        response = self.client.patch(
+            reverse('courses:update-lessons', args=[self.lesson.id]),
+            data=data
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+        )
+
+    def test_lesson_update_description_is_not_valid(self):
+        """ Тест обновление описания урока (проверка на валидность ссылки не проходит)"""
+
+        data = {
+            "description_lesson": "www.outub.com"
         }
 
         response = self.client.patch(

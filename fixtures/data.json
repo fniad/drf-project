@@ -1,1 +1,172 @@
-[{"model": "payment.payment", "pk": 1, "fields": {"user": null, "course": 2, "lesson": null, "date_pay": "2023-06-04", "payment_amount": 50000, "payment_method": "PAY_CASH"}}, {"model": "payment.payment", "pk": 2, "fields": {"user": null, "course": 2, "lesson": null, "date_pay": "2022-06-10", "payment_amount": 50000, "payment_method": "PAY_CARD"}}, {"model": "payment.payment", "pk": 3, "fields": {"user": null, "course": 3, "lesson": null, "date_pay": "2023-07-10", "payment_amount": 70000, "payment_method": "PAY_CARD"}}, {"model": "payment.payment", "pk": 4, "fields": {"user": null, "course": 4, "lesson": null, "date_pay": "2021-07-10", "payment_amount": 75000, "payment_method": "PAY_CARD"}}, {"model": "payment.payment", "pk": 5, "fields": {"user": null, "course": null, "lesson": 4, "date_pay": "2023-07-10", "payment_amount": 5000, "payment_method": "PAY_CARD"}}, {"model": "payment.payment", "pk": 6, "fields": {"user": null, "course": null, "lesson": 2, "date_pay": "2020-08-10", "payment_amount": 4000, "payment_method": "PAY_CARD"}}, {"model": "payment.payment", "pk": 7, "fields": {"user": null, "course": null, "lesson": 4, "date_pay": "2022-10-10", "payment_amount": 4000, "payment_method": "PAY_CARD"}}, {"model": "payment.payment", "pk": 8, "fields": {"user": null, "course": null, "lesson": 3, "date_pay": "2023-10-10", "payment_amount": 5500, "payment_method": "PAY_CARD"}}, {"model": "training_courses.lesson", "pk": 2, "fields": {"name_lesson": "Start OOP", "description_lesson": "OOP", "preview_img_lesson": "", "video_url_lesson": null, "course": 2}}, {"model": "training_courses.lesson", "pk": 3, "fields": {"name_lesson": "OOP", "description_lesson": "OOP", "preview_img_lesson": "", "video_url_lesson": null, "course": 3}}, {"model": "training_courses.lesson", "pk": 4, "fields": {"name_lesson": "Django", "description_lesson": "Dlango + DRF", "preview_img_lesson": "", "video_url_lesson": null, "course": 2}}, {"model": "training_courses.course", "pk": 2, "fields": {"name_course": "Python-develop", "preview_img_course": "", "description_course": "Python"}}, {"model": "training_courses.course", "pk": 3, "fields": {"name_course": "Java-develop", "preview_img_course": "", "description_course": "Java"}}, {"model": "training_courses.course", "pk": 4, "fields": {"name_course": "Backend-develop", "preview_img_course": "", "description_course": "PHP"}}]
+[
+  {
+    "model": "payment.payment",
+    "pk": 3,
+    "fields": {
+      "user": 3,
+      "date_pay": "2023-07-10",
+      "payment_amount": 70000,
+      "payment_method": "PAY_CARD",
+      "content_type": 9,
+      "object_id": 3
+    }
+  },
+  {
+    "model": "payment.payment",
+    "pk": 4,
+    "fields": {
+      "user": 2,
+      "date_pay": "2021-07-10",
+      "payment_amount": 75000,
+      "payment_method": "PAY_CARD",
+      "content_type": 9,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "payment.payment",
+    "pk": 6,
+    "fields": {
+      "user": 2,
+      "date_pay": "2020-08-10",
+      "payment_amount": 4000,
+      "payment_method": "PAY_CARD",
+      "content_type": 9,
+      "object_id": 13
+    }
+  },
+  {
+    "model": "payment.payment",
+    "pk": 5,
+    "fields": {
+      "user": 2,
+      "date_pay": "2023-07-10",
+      "payment_amount": 5000,
+      "payment_method": "PAY_CARD",
+      "content_type": 10,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "payment.payment",
+    "pk": 7,
+    "fields": {
+      "user": 3,
+      "date_pay": "2022-10-10",
+      "payment_amount": 4000,
+      "payment_method": "PAY_CARD",
+      "content_type": 10,
+      "object_id": 4
+    }
+  },
+  {
+    "model": "payment.payment",
+    "pk": 8,
+    "fields": {
+      "user": 3,
+      "date_pay": "2023-10-10",
+      "payment_amount": 5500,
+      "payment_method": "PAY_CARD",
+      "content_type": 10,
+      "object_id": 5
+    }
+  },
+  {
+    "model": "training_courses.lesson",
+    "pk": 4,
+    "fields": {
+      "name_lesson": "Django",
+      "description_lesson": "Dlango + DRF",
+      "preview_img_lesson": "",
+      "video_url_lesson": null,
+      "course": null,
+      "owner": 2,
+      "price": 0
+    }
+  },
+  {
+    "model": "training_courses.lesson",
+    "pk": 5,
+    "fields": {
+      "name_lesson": "OOP Pro",
+      "description_lesson": "OOP",
+      "preview_img_lesson": "",
+      "video_url_lesson": null,
+      "course": 3,
+      "owner": 3,
+      "price": 0
+    }
+  },
+  {
+    "model": "training_courses.lesson",
+    "pk": 6,
+    "fields": {
+      "name_lesson": "Base PHP",
+      "description_lesson": "PHP",
+      "preview_img_lesson": "",
+      "video_url_lesson": null,
+      "course": 4,
+      "owner": 2,
+      "price": 0
+    }
+  },
+  {
+    "model": "training_courses.lesson",
+    "pk": 3,
+    "fields": {
+      "name_lesson": "OOP",
+      "description_lesson": "https://www.youtube.com/watch?v=-GgqwRnGmCc",
+      "preview_img_lesson": "",
+      "video_url_lesson": "https://www.youtube.com/watch?v=-GgqwRnGmCc",
+      "course": 3,
+      "owner": 3,
+      "price": 0
+    }
+  },
+  {
+    "model": "training_courses.lesson",
+    "pk": 2,
+    "fields": {
+      "name_lesson": "OOP",
+      "description_lesson": "Бла-бла https://www.youtube.com/watch?v=ChEdFh7Q-Vw&pp=ygUDb29w",
+      "preview_img_lesson": "",
+      "video_url_lesson": "https://www.youtube.com/watch?v=ChEdFh7Q-Vw&pp=ygUDb29w",
+      "course": null,
+      "owner": 3,
+      "price": 0
+    }
+  },
+  {
+    "model": "training_courses.course",
+    "pk": 4,
+    "fields": {
+      "name_course": "Backend-develop",
+      "preview_img_course": "",
+      "description_course": "PHP",
+      "owner": 3,
+      "price": 0
+    }
+  },
+  {
+    "model": "training_courses.course",
+    "pk": 3,
+    "fields": {
+      "name_course": "Java-develop",
+      "preview_img_course": "",
+      "description_course": "Разработка на Java",
+      "owner": 3,
+      "price": 0
+    }
+  },
+  {
+    "model": "training_courses.course",
+    "pk": 13,
+    "fields": {
+      "name_course": "New Django",
+      "preview_img_course": "",
+      "description_course": "Dlango + DRF",
+      "owner": 2,
+      "price": 0
+    }
+  }
+]

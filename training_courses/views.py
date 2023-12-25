@@ -1,15 +1,20 @@
+""" Представления для курсов, уроков и подписок"""
 from django.db.models import Count
-from rest_framework import viewsets, generics
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from training_courses.models import Course, Lesson, Subscription
-from training_courses.pagination import CoursePagination, LessonPagination, SubscriptionPagination
-from training_courses.permissions import IsCourseOwner, IsModerator, IsLessonOwner, IsSubscriptionOwner
-from training_courses.serializers import CourseSerializer, LessonSerializer, CourseListSerializer, \
+
+from .models import Course, Lesson, Subscription
+from .pagination import CoursePagination, LessonPagination, SubscriptionPagination
+from .permissions import IsCourseOwner, IsModerator, IsLessonOwner, IsSubscriptionOwner
+from .serializers import CourseSerializer, LessonSerializer, CourseListSerializer, \
     CourseDetailSerializer, SubscriptionSerializer, LessonListSerializer
+from rest_framework import generics
+from training_courses.tasks import send_lesson_update_emails, send_course_update_emails
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all().order_by('name_course')
+    """ ViewSet для курсов """
+    queryset = Course.objects.all().order_by('pk')
     default_serializer = CourseSerializer
     pagination_class = CoursePagination
     list_serializers = {
@@ -22,6 +27,10 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        course_id = self.get_object().id
+        send_course_update_emails.delay(course_id)
 
     def get_serializer_class(self):
         return self.list_serializers.get(self.action, self.default_serializer)
@@ -46,6 +55,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
+    """ ViewSet для подписок """
     queryset = Subscription.objects.all().order_by('pk')
     serializer_class = SubscriptionSerializer
     pagination_class = SubscriptionPagination
@@ -56,32 +66,48 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
 
 
 class LessonListAPIView(generics.ListAPIView):
+    """ Список уроков """
     serializer_class = LessonListSerializer
-    queryset = Lesson.objects.all().order_by('name_lesson')
+    queryset = Lesson.objects.all().order_by('pk')
     permission_classes = [IsAuthenticated, IsLessonOwner | IsModerator]
     pagination_class = LessonPagination
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
+    """ Подробная информация об уроке """
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
+    queryset = Lesson.objects.all().order_by('pk')
     permission_classes = [IsAuthenticated, IsLessonOwner | IsModerator]
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
+    """ Создание урока """
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, ~IsModerator]
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        lesson = serializer.save(owner=self.request.user)
+        course_id = lesson.course.id if lesson.course else None
+        if course_id:
+            send_course_update_emails.delay(course_id)
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
+    """ Обновление урока """
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, IsLessonOwner | ~IsModerator]
+    queryset = Lesson.objects.all().order_by('pk')
+    permission_classes = [IsAuthenticated, IsLessonOwner]
+
+    def perform_update(self, serializer):
+        lesson_id = self.get_object().id
+        course_id = self.get_object().course.id if self.get_object().course else None
+        send_lesson_update_emails.delay(lesson_id)
+        if course_id:
+            send_course_update_emails.delay(course_id)
+        return super().perform_update(serializer)
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
-    queryset = Lesson.objects.all()
+    """ Удаление урока """
+    queryset = Lesson.objects.all().order_by('pk')
     permission_classes = [IsAuthenticated, IsLessonOwner | IsAdminUser]

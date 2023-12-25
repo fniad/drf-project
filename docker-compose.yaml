@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+
+    redis:
+        image: redis:latest
+        ports:
+            - "6381:6379"
+
+    db:
+        image: postgres:15.1-alpine
+        restart: always
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: 1234
+            POSTGRES_DB: postgres
+        volumes:
+            - pg_data:/var/lib/postgresql/data/
+        ports:
+            - "5432:5432"
+        healthcheck:
+            test: pg_isready -U postgres -d postgres
+            interval: 3s
+            timeout: 3s
+            retries: 10
+
+    app:
+        build: .
+        tty: true
+        command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+        ports:
+            - "8000:8000"
+        depends_on:
+            db:
+                condition: service_healthy
+
+    celery:
+        build: .
+        tty: true
+        command: celery -A config worker -l INFO
+        volumes:
+            - .:/code
+        depends_on:
+            - app
+            - redis
+
+    celery-beat:
+        build: .
+        restart: always
+        tty: true
+        command: celery -A config beat -l INFO
+        volumes:
+            - .:/code
+        depends_on:
+            - app
+            - redis
+
+volumes:
+  pg_data:

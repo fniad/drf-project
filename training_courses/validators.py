@@ -1,12 +1,18 @@
+""" Валидаторы приложения training_courses """
 import re
+
 from rest_framework.serializers import ValidationError
+
 from config import settings
 
 
 class LinkValidator:
     """Проверка на ссылки в описании и url_видео"""
+
     def __init__(self, field):
-        self.youtube_pattern = re.compile(
+        self.www_youtube_pattern = re.compile(
+            r'((?:www\.)?youtube\.com|youtu.be)(.*)')
+        self.http_youtube_pattern = re.compile(
             r'((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?'
         )
         self.app_domains = getattr(settings, 'ALLOWED_HOSTS', [])
@@ -33,27 +39,38 @@ class LinkValidator:
     def has_valid_links(self, text):
         """ Проверка текстовых полей и поля ссылки на соответствие валидным паттернам """
 
-        app_patterns = self.get_app_pattern()
-        youtube_pattern = re.compile(self.youtube_pattern.pattern, re.UNICODE)
+        app_patterns_http, app_patterns_www = self.get_app_pattern()
+        http_youtube_pattern = re.compile(self.http_youtube_pattern.pattern, re.UNICODE)
+        www_youtube_pattern = re.compile(self.www_youtube_pattern.pattern, re.UNICODE)
 
-        if (youtube_pattern.search(text) and app_patterns.search(text)) or all(
-                char.isalnum() or char.isspace() for char in text):
+        if ((http_youtube_pattern.search(text) or www_youtube_pattern.search(text)) and (app_patterns_http.search(
+                text) or app_patterns_www.search(text))) or all(char.isalnum() or char.isspace() for char in text):
             return True
 
         return False
 
     def get_app_pattern(self):
         """ Генерация паттерна с доменами сайта"""
-        app_patterns = []
+        app_patterns_http = []
+        app_patterns_www = []
         if self.app_domains:
             for domain in self.app_domains:
-                app_patterns.extend(self.get_app_patterns(domain))
-        apps_pattern = '|'.join(app_patterns)
-        return re.compile(apps_pattern)
+                app_patterns_http.extend(self.get_app_http_patterns(domain))
+                app_patterns_www.extend(self.get_app_www_patterns(domain))
+        apps_pattern_http = '|'.join(app_patterns_http)
+        apps_pattern_www = '|'.join(app_patterns_www)
+        return re.compile(apps_pattern_http), re.compile(apps_pattern_www)
 
     @staticmethod
-    def get_app_patterns(domain):
+    def get_app_http_patterns(domain):
         """ Получение строки валидных символов для паттерна домена """
         return [
             rf'^((?:https?:)?\/\/)?((?:www|m)\.)?((?:{re.escape(domain)}))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?'
+        ]
+
+    @staticmethod
+    def get_app_www_patterns(domain):
+        """ Получение строки валидных символов для паттерна домена """
+        return [
+            rf'((?:www\.)?{re.escape(domain)})(.*)'
         ]

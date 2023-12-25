@@ -1,29 +1,50 @@
-from rest_framework import viewsets
-from rest_framework.permissions import AllowAny, IsAuthenticated
+""" Представления для users """
+from rest_framework import generics
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
 from users.models import User
+from users.pagination import UserPagination
 from users.permissions import IsOwnerOrReadOnly
-from users.serializers import UserSerializer, UserPublicProfileSerializer, UserCreateSerializer
+from users.serializers import UserSerializer, UserPublicProfileSerializer, UserCreateSerializer, UserProfileSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class UserListAPIView(generics.ListAPIView):
+    """ Список пользователей """
+    serializer_class = UserPublicProfileSerializer
+    queryset = User.objects.all().order_by('pk')
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    pagination_class = UserPagination
 
-    def get_permissions(self):
-        if self.action == 'create':
-            return [AllowAny()]
-        else:
-            return super().get_permissions()
+
+class UserRetrieveAPIView(generics.RetrieveAPIView):
+    """ Подробная информация о пользователе """
+    queryset = User.objects.all().order_by('pk')
+    pagination_class = UserPagination
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly | IsAdminUser]
 
     def get_serializer_class(self):
-        if self.action == 'list':
-            return UserPublicProfileSerializer
-        elif (self.action in ['retrieve', 'update', 'partial_update', 'destroy'] and
-              self.request.user == self.get_object() or self.request.user.is_superuser):
-            return UserSerializer
-        elif self.action == 'retrieve' and self.request.user != self.get_object():
-            return UserPublicProfileSerializer
-        elif self.action == 'create':
-            return UserCreateSerializer
+        """ Получение сериализаторов """
+        if self.request.user.is_authenticated:
+            if self.request.user.is_staff or self.get_object().id == self.request.user.id:
+                return UserProfileSerializer
+        return UserPublicProfileSerializer
+
+
+class UserCreateAPIView(generics.CreateAPIView):
+    """ Создание пользователя """
+    serializer_class = UserCreateSerializer
+    permission_classes = [AllowAny]
+
+
+class UserUpdateAPIView(generics.UpdateAPIView):
+    """ Обновление пользователя """
+    queryset = User.objects.all().order_by('pk')
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly | IsAdminUser]
+
+
+class UserDestroyAPIView(generics.DestroyAPIView):
+    """ Удаление пользователя """
+    queryset = User.objects.all().order_by('pk')
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly | IsAdminUser]

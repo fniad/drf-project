@@ -2,7 +2,8 @@ from django.core import serializers
 from django.core.management import BaseCommand
 from itertools import chain
 
-from payment.models import Payment, Lesson, Course
+from payment.models import Payment
+from training_courses.models import Course, Lesson
 
 
 class Command(BaseCommand):
