@@ -1,12 +1,16 @@
 """ Представления для курсов, уроков и подписок"""
 from django.db.models import Count
-from rest_framework import viewsets, generics
+from rest_framework import viewsets
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+
 from .models import Course, Lesson, Subscription
 from .pagination import CoursePagination, LessonPagination, SubscriptionPagination
 from .permissions import IsCourseOwner, IsModerator, IsLessonOwner, IsSubscriptionOwner
 from .serializers import CourseSerializer, LessonSerializer, CourseListSerializer, \
     CourseDetailSerializer, SubscriptionSerializer, LessonListSerializer
+from rest_framework import generics
+from training_courses.tasks import send_lesson_update_emails, send_course_update_emails
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -24,6 +28,10 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        course_id = self.get_object().id
+        send_course_update_emails.delay(course_id)
 
     def get_serializer_class(self):
         return self.list_serializers.get(self.action, self.default_serializer)
@@ -79,14 +87,25 @@ class LessonCreateAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated, ~IsModerator]
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        lesson = serializer.save(owner=self.request.user)
+        course_id = lesson.course.id if lesson.course else None
+        if course_id:
+            send_course_update_emails.delay(course_id)
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
     """ Обновление урока """
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all().order_by('pk')
-    permission_classes = [IsAuthenticated, IsLessonOwner | ~IsModerator]
+    permission_classes = [IsAuthenticated, IsLessonOwner]
+
+    def perform_update(self, serializer):
+        lesson_id = self.get_object().id
+        course_id = self.get_object().course.id if self.get_object().course else None
+        send_lesson_update_emails.delay(lesson_id)
+        if course_id:
+            send_course_update_emails.delay(course_id)
+        return super().perform_update(serializer)
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):

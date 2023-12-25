@@ -357,6 +357,16 @@ files = [
 toml = ["tomli"]
 
 [[package]]
+name = "crontab"
+version = "1.0.1"
+description = "Parse and use crontab schedules in Python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "crontab-1.0.1.tar.gz", hash = "sha256:89477e3f93c81365e738d5ee2659509e6373bb2846de13922663e79aa74c6b91"},
+]
+
+[[package]]
 name = "django"
 version = "4.2.5"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
@@ -973,4 +983,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "78ad3860080c00addd8332a222e7f9289f84ea2b68f0ec1740697137a4ff091d"
+content-hash = "9710baebda996327e6dad42dbd4da90e877630503accd5b20d4ab079fd615ea6"

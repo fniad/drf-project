@@ -1,6 +1,8 @@
 """ Модели приложения training_courses """
 from django.db import models
 from users.models import NULLABLE, User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Course(models.Model):
@@ -10,6 +12,7 @@ class Course(models.Model):
     description_course = models.TextField(verbose_name='описание курса')
     owner = models.ForeignKey('users.User', on_delete=models.CASCADE, null=True, verbose_name='Владелец')
     price = models.PositiveIntegerField(default=0)
+    last_update = models.DateTimeField(auto_now=True)
 
     @property
     def display_price(self) -> str:
@@ -44,6 +47,7 @@ class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, **NULLABLE, verbose_name='курс')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, verbose_name='Владелец')
     price = models.PositiveIntegerField(default=0)
+    last_update = models.DateTimeField(auto_now=True)
 
     @property
     def display_price(self) -> str:
@@ -67,6 +71,16 @@ class Lesson(models.Model):
         """ Мета-данные """
         verbose_name = 'урок'
         verbose_name_plural = 'уроки'
+
+
+# Добавляем обработчик сигнала
+@receiver(post_save, sender=Lesson)
+def update_course_on_lesson_save(sender, instance, **kwargs):
+    """ Обработчик сигнала при сохранении урока или обновлении, обновляет связанный с уроком курс """
+    if instance.course:  # Проверяем, что урок связан с конкретным курсом
+        course = instance.course
+        course.last_update = instance.last_update
+        course.save()
 
 
 class Subscription(models.Model):
