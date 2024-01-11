@@ -1,0 +1,20 @@
+stages:
+  - deploy
+
+Deploy to stage:
+  stage: deploy
+  image: python:3.8
+  script:
+    - cp $ENV_STAGE .env
+#    - poetry install
+#    - poetry shell
+#    - python manage.py migrate
+#    - python manage.py runserver 0.0.0.0:8000
+  only:
+    - main
+  tags:
+    - dev
+
+#curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+#sudo -E apt-get install gitlab-runner
+
