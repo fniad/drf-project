@@ -3,7 +3,6 @@ stages:
 
 Deploy to stage:
   stage: deploy
-  image: python:3.8
   script:
     - cp $ENV_STAGE .env
 #    - poetry install
