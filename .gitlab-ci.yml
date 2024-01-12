@@ -5,10 +5,6 @@ Deploy to stage:
   stage: deploy
   script:
     - cp $ENV_STAGE .env
-#    - poetry install
-#    - poetry shell
-#    - python manage.py migrate
-#    - python manage.py runserver 0.0.0.0:8000
   only:
     - main
   tags:
