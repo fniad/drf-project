@@ -5,7 +5,9 @@ deploy:
   stage: deploy
   script:
     - cp $ENV_STAGE .env
-    - bash deploy.sh
+    - poetry install
+    - poetry run python3 manage.py migrate
+    - poetry run python3 manage.py collectstatic --no-input
   only:
     - main
   tags:
