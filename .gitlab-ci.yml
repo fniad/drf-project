@@ -5,9 +5,7 @@ deploy:
   stage: deploy
   script:
     - cp $ENV_STAGE .env
-    - poetry install
-    - poetry run python3 manage.py migrate
-    - poetry run python3 manage.py collectstatic --no-input
+    - docker-compose -f docker-compose.yaml up --build -d
   only:
     - main
   tags:
