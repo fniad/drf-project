@@ -30,6 +30,11 @@ services:
         command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
         ports:
             - "8000:8000"
+        healthcheck:
+            test: "curl --fail http://158.160.8.35/redoc/"
+            interval: 5s
+            timeout: 5s
+            retries: 20
         depends_on:
             db:
                 condition: service_healthy
@@ -41,8 +46,10 @@ services:
         volumes:
             - .:/code
         depends_on:
-            - app
-            - redis
+            app:
+                condition: service_healthy
+            redis:
+                condition: service_started
 
     celery-beat:
         build: .
@@ -52,8 +59,10 @@ services:
         volumes:
             - .:/code
         depends_on:
-            - app
-            - redis
+            app:
+                condition: service_healthy
+            redis:
+                condition: service_started
 
 volumes:
   pg_data:
