@@ -9,14 +9,6 @@
 
 ## Установка через DOCKER
 
-Установка 
-Клонирование репозитория git clone https://github.com/fniad/online_learning_platform.git
-cd authorization_service
-touch .env.docker nano .env.docker и заполнить по шаблону из .env.docker.test
-
-docker-compose build
-docker-compose up
-
 ### Шаг 1. Клонирование репозитория
 
 1. ```git clone https://github.com/fniad/online_learning_platform.git```
