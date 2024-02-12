@@ -31,7 +31,7 @@ docker-compose up
 
 ```systemctl stop postgresql```
 
-### Шаг 7 Запуск docker-compose
+### Шаг 4. Запуск docker-compose
 
 1. ```docker-compose build```
 2. ```docker-compose exec app python manage.py migrate``` в соседнем терминале
