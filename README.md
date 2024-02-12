@@ -1,46 +1,38 @@
-# drf-project
+# Online Learning Platform
+
+##  Описание
+Проект "Online Learning Platform" – это современная система управления обучением (LMS), предназначенная для создания, публикации и прохождения онлайн-курсов. Основанный на концепции Single Page Application (SPA), проект предлагает эффективный и удобный интерфейс пользователя для обучения в любое удобное время.
+
+## Стек технологий
+
+Бэкенд построен на Django с использованием Django Rest Framework для создания API. Celery используется для асинхронной обработки задач, а Redis — в качестве брокера сообщений.
+
+## Установка через DOCKER
+
+Установка 
+Клонирование репозитория git clone https://github.com/fniad/online_learning_platform.git
+cd authorization_service
+touch .env.docker nano .env.docker и заполнить по шаблону из .env.docker.test
+
+docker-compose build
+docker-compose up
 
 ### Шаг 1. Клонирование репозитория
 
-```git clone https://github.com/fniad/drf-project.git```
+1. ```git clone https://github.com/fniad/online_learning_platform.git```
+2. ```cd online_learning_platform```
 
-```cd drf-project```
+### Шаг 2. Настройка окружения
 
-### Шаг 2. Установка зависимостей
+1. ```touch .env.docker``` 
+2. ```nano .env.docker``` и заполнить по шаблону из .env.docker.test
 
-```python3 poetry install```
+### Шаг 3. На Ubuntu или Linux сначала остановить postgresql
 
-```poetry shell```
+```systemctl stop postgresql```
 
-### Шаг 3. Установка и настройка PostgreSQL
+### Шаг 7 Запуск docker-compose
 
-```sudo apt-get install postgresql```
-
-```sudo -u postgres psql```
-
-```CREATE DATABASE drf_project;```
-
-```\q```
-
-### Шаг 4. Настройка окружения
-
-```touch .env```
-
-```nano .env```
-
-и заполнить по шаблону из **.env.test**
-
-### Шаг 5. Загрузка данных с помощью команд 
-
-1. ```python3 manage.py fill_db``` (загрузка в БД данных)
-
-### Шаг 6 Применение миграций
-
-```python3 manage.py migrate```
-
-# Для запуска DOCKER
-
-1.  На Ubuntu или Linux сначала остановить postgresql ```systemctl stop postgresql```
-2. ```docker-compose build```
-3. ```docker-compose exec app python manage.py migrate``` в соседнем терминале
-4. ```docker-compose up```
+1. ```docker-compose build```
+2. ```docker-compose exec app python manage.py migrate``` в соседнем терминале
+3. ```docker-compose up```
